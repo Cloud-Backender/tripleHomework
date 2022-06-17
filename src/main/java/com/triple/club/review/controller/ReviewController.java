@@ -2,7 +2,7 @@ package com.triple.club.review.controller;
 
 import com.triple.club.review.model.contant.ReviewConstant;
 import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.service.EventService;
+import com.triple.club.review.service.ReviewService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ReviewController {
     private final Logger logger = LogManager.getLogger(ReviewController.class);
-    private final EventService eventService;
+    private final ReviewService reviewService;
 
 
     @Autowired
-    public ReviewController(EventService eventService) {
-        this.eventService = eventService;
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
     }
 
     @PostMapping("/events")
@@ -37,7 +37,7 @@ public class ReviewController {
         if(!review.getType().equals(ReviewConstant.REVIEW) || review.getType().isEmpty()) {
             return new ResponseEntity<>("잘못된 요청",HttpStatus.BAD_REQUEST);
         }
-        eventService.reviewEvent(review);
+        reviewService.reviewEvent(review);
         return new ResponseEntity<>("성공",HttpStatus.OK);
     }
 }

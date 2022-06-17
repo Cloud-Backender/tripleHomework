@@ -5,7 +5,7 @@ import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.model.entity.PointLogEntity;
 import com.triple.club.review.repository.ReviewRepository;
 import com.triple.club.review.repository.PointLogRepository;
-import com.triple.club.review.service.EventService;
+import com.triple.club.review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,12 +16,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class EventServiceImpl implements EventService {
+public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PointLogRepository pointLogRepository;
 
     @Autowired
-    public EventServiceImpl(ReviewRepository reviewRepository, PointLogRepository pointLogRepository) {
+    public ReviewServiceImpl(ReviewRepository reviewRepository, PointLogRepository pointLogRepository) {
         this.reviewRepository = reviewRepository;
         this.pointLogRepository = pointLogRepository;
     }
@@ -46,8 +46,8 @@ public class EventServiceImpl implements EventService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void addEvent(ReviewDto event) throws Exception {
-        if (!reviewRepository.existsByPlaceId(event.getPlaceId())) {
-            addPoint(event.getUserId(), "장소의 첫 리뷰 +1 Point.");
+        if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
+            addPoint(event, "장소의 첫 리뷰 +1 Point.");
         } else {
             throw new Exception("해당 장소에 이미 리뷰를 작성함");
         }
@@ -65,11 +65,11 @@ public class EventServiceImpl implements EventService {
 
 
         if (event.getContent().length() > 0) {
-            addPoint(event.getUserId(), "리뷰 내용 작성 +1 Point.");
+            addPoint(event, "리뷰 내용 작성 +1 Point.");
         }
 
         if (event.getAttachedPhotoIds().length > 0) {
-            addPoint(event.getUserId(), "리뷰 사진 작성 +1 Point.");
+            addPoint(event, "리뷰 사진 작성 +1 Point.");
         }
 
     }
@@ -93,27 +93,29 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void addPoint(String userId, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderByCreateTimeDesc(userId);
+    private void addPoint(ReviewDto reviewDto, String reason) {
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeq(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
             pointLogEntity = PointLogEntity.builder()
-                    .userId(userId)
+                    .userId(reviewDto.getUserId())
                     .reason(reason)
                     .totalPoint(1L)
+                    .reviewId(reviewDto.getReviewId())
                     .build();
         } else {
             pointLogEntity = PointLogEntity.builder()
-                    .userId(userId)
+                    .userId(reviewDto.getUserId())
                     .reason(reason)
                     .totalPoint(presentEntity.get().getTotalPoint() + 1)
+                    .reviewId(reviewDto.getReviewId())
                     .build();
         }
         pointLogRepository.save(pointLogEntity);
     }
     private void removePoint(String userId, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderByCreateTimeDesc(userId);
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeq(userId);
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
@@ -125,7 +127,7 @@ public class EventServiceImpl implements EventService {
         } else {
             pointLogEntity = PointLogEntity.builder()
                     .userId(userId)
-                    .reason("")
+                    .reason(reason)
                     .totalPoint(presentEntity.get().getTotalPoint() > 0 ? presentEntity.get().getTotalPoint() - 1 : 0)
                     .build();
         }
@@ -134,7 +136,7 @@ public class EventServiceImpl implements EventService {
 
     private void compareReview(ReviewDto eventReview, ReviewEntity preReview) {
         if (eventReview.getContent().length() > 0 && !(preReview.getContent().length() > 0)) {
-            addPoint(eventReview.getUserId(), "기존 리뷰 내용 작성 +1 Point.");
+            addPoint(eventReview, "기존 리뷰 내용 작성 +1 Point.");
         } else if (!(eventReview.getContent().length() > 0) && preReview.getContent().length() > 0) {
             removePoint(eventReview.getUserId(), "기존 리뷰 내용 삭제 -1 Point.");
         }
@@ -142,7 +144,7 @@ public class EventServiceImpl implements EventService {
 
 
         if (eventReview.getAttachedPhotoIds().length > 0 && !(preReview.getAttachedPhotoIds().length() > 0)) {
-            addPoint(eventReview.getUserId(), "기존 리뷰 사진 작성 +1 Point.");
+            addPoint(eventReview, "기존 리뷰 사진 작성 +1 Point.");
         } else if (!(eventReview.getAttachedPhotoIds().length >0) && preReview.getAttachedPhotoIds().length() > 0) {
             removePoint(eventReview.getUserId(), "기존 리뷰 사진 삭제 -1 Point.");
         }

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
-    boolean existsByPlaceId(String placeId);
+    boolean existsByPlaceIdAndUserId(String placeId, String userId);
     Optional<ReviewEntity> findByReviewId(String reviewId);
 }

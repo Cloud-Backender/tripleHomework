@@ -26,4 +26,6 @@ public class PointLogEntity extends CreateDtEntity {
     @Column(name = "TOTAL_POINT")
     private Long totalPoint;
 
+    @Column(name = "REVIEW_ID")
+    private String reviewId;
 }
