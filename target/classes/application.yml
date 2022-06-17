@@ -1,0 +1,28 @@
+server:
+  port: 1111
+  
+  
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: com.triple.club.common.configuration.JPANamingConfig
+    show-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: true
+  datasource:
+    driverclassname: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/data?serverTimezone=Asia/Seoul
+    username: root
+    password: admin
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
