@@ -28,4 +28,8 @@ public class PointLogEntity extends CreateDtEntity {
 
     @Column(name = "REVIEW_ID")
     private String reviewId;
+
+    public void updateTotalPoint(Long totalPoint) {
+        this.totalPoint = totalPoint;
+    }
 }

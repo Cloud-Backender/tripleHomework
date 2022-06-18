@@ -6,19 +6,27 @@ import com.triple.club.review.model.entity.PointLogEntity;
 import com.triple.club.review.repository.ReviewRepository;
 import com.triple.club.review.repository.PointLogRepository;
 import com.triple.club.review.service.ReviewService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PointLogRepository pointLogRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ReviewServiceImpl.class);
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public ReviewServiceImpl(ReviewRepository reviewRepository, PointLogRepository pointLogRepository) {
@@ -44,7 +52,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void addEvent(ReviewDto event) throws Exception {
         if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
             addPoint(event, "장소의 첫 리뷰 +1 Point.");
@@ -61,7 +68,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .userId(event.getUserId())
                 .placeId(event.getPlaceId())
                 .build();
-        reviewRepository.save(reviewEntity);
+        em.persist(reviewEntity);
+//        reviewRepository.save(reviewEntity);
 
 
         if (event.getContent().length() > 0) {
@@ -71,9 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (event.getAttachedPhotoIds().length > 0) {
             addPoint(event, "리뷰 사진 작성 +1 Point.");
         }
-
     }
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void modEvent(ReviewDto eventReview) throws Exception {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
@@ -83,7 +89,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
     }
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteEvent(ReviewDto eventReview) throws Exception {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
@@ -93,8 +98,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    private void addPoint(ReviewDto reviewDto, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeq(reviewDto.getUserId());
+    void addPoint(ReviewDto reviewDto, String reason) {
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
@@ -112,10 +117,12 @@ public class ReviewServiceImpl implements ReviewService {
                     .reviewId(reviewDto.getReviewId())
                     .build();
         }
-        pointLogRepository.save(pointLogEntity);
+        em.persist(pointLogEntity);
+//        pointLogRepository.save(pointLogEntity);
+
     }
     private void removePoint(String userId, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeq(userId);
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(userId);
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
