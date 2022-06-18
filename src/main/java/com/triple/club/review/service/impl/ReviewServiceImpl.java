@@ -11,7 +11,6 @@ import com.triple.club.review.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +35,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void reviewEvent(ReviewDto event) throws Exception {
+    public ReviewEntity reviewEvent(ReviewDto event) throws CustomException {
+        ReviewEntity reviewEntity = new ReviewEntity();
         switch (event.getAction()) {
             case ADD:
-                addEvent(event);
+                reviewEntity = addEvent(event);
                 break;
             case MOD:
                 modEvent(event);
@@ -51,9 +51,10 @@ public class ReviewServiceImpl implements ReviewService {
 
                 break;
         }
+        return reviewEntity;
     }
 
-    public void addEvent(ReviewDto event) throws Exception {
+    public ReviewEntity addEvent(ReviewDto event) throws CustomException {
         if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
             addPoint(event, "+1 Point : 장소의 첫 리뷰 .");
         } else {
@@ -80,8 +81,9 @@ public class ReviewServiceImpl implements ReviewService {
         if (event.getAttachedPhotoIds().length > 0) {
             addPoint(event, "+1 Point 리뷰 사진 작성");
         }
+        return reviewEntity;
     }
-    public void modEvent(ReviewDto eventReview) throws Exception {
+    public void modEvent(ReviewDto eventReview) throws CustomException {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             modReivew(eventReview, reviewEntity.get());
@@ -90,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
     }
-    public void deleteEvent(ReviewDto eventReview) throws Exception {
+    public void deleteEvent(ReviewDto eventReview) throws CustomException {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
@@ -182,5 +184,15 @@ public class ReviewServiceImpl implements ReviewService {
         em.persist(preReview);
 //        reviewRepository.save(preReview);
 
+    }
+
+    @Override
+    public long getTotalPoint(String userId) throws CustomException {
+        Optional<PointLogEntity> pointLogEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(userId);
+        if (pointLogEntity.isPresent()){
+            return pointLogEntity.get().getTotalPoint();
+        } else {
+            throw new CustomException(ApiExceptionCode.NOT_EXIST_USER);
+        }
     }
 }

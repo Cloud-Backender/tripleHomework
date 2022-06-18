@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ApiExceptionCode {
     NONE (0,""),
     ALREADY_EXIST_REVIEW(100, "이미 리뷰가 존재합니다."),
-    NOT_EXIST_REVIEW(100, "리뷰가 존재하지 않습니다."),
+    NOT_EXIST_REVIEW(101, "리뷰가 존재하지 않습니다."),
+    NOT_EXIST_USER(102, "유저가 존재하지 않습니다."),
     SYSTEM_ERROR(599, "시스템 에러")
     ;
 

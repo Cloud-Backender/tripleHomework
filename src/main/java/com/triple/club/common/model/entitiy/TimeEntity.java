@@ -1,4 +1,4 @@
-package com.triple.club.common.entitiy;
+package com.triple.club.common.model.entitiy;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,16 +1,17 @@
 package com.triple.club.review.controller;
 
+import com.triple.club.common.exception.ApiExceptionCode;
+import com.triple.club.common.exception.CustomException;
 import com.triple.club.review.model.contant.ReviewConstant;
 import com.triple.club.review.model.dto.ReviewDto;
+import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.service.ReviewService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * fileName       : ReviewController
@@ -33,11 +34,16 @@ public class ReviewController {
     }
 
     @PostMapping("/events")
-    public ResponseEntity<String> reviewEvent(@RequestBody ReviewDto review) throws Exception {
+    public ResponseEntity<ReviewEntity> reviewEvent(@RequestBody ReviewDto review) throws CustomException {
         if(!review.getType().equals(ReviewConstant.REVIEW) || review.getType().isEmpty()) {
-            return new ResponseEntity<>("잘못된 요청",HttpStatus.BAD_REQUEST);
+            throw new CustomException(ApiExceptionCode.SYSTEM_ERROR);
         }
-        reviewService.reviewEvent(review);
-        return new ResponseEntity<>("성공",HttpStatus.OK);
+        ReviewEntity reviewEntity = reviewService.reviewEvent(review);
+        return new ResponseEntity<>(reviewEntity,HttpStatus.OK);
+    }
+    @GetMapping("/total-point/{userId}")
+    public ResponseEntity<Long> getTotalPoint(@PathVariable String userId) throws CustomException {
+        long result = reviewService.getTotalPoint(userId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

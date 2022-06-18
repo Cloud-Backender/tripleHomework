@@ -1,5 +1,6 @@
 package com.triple.club.common.exception;
 
+import com.triple.club.common.model.dto.ApiExceptionDto;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -12,7 +13,7 @@ public class CustomException extends Exception {
         this.apiExceptionCode = apiExceptionCode;
     }
 
-    public String getErrorDetail() {
-        return "Error Code:"+getApiExceptionCode().getApiCode()+"\nError Message:"+getApiExceptionCode().getMessage();
+    public ApiExceptionDto getErrorDetail() {
+        return new ApiExceptionDto(this.apiExceptionCode);
     }
 }

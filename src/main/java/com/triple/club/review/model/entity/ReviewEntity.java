@@ -1,14 +1,12 @@
 package com.triple.club.review.model.entity;
 
-import com.triple.club.common.entitiy.TimeEntity;
+import com.triple.club.common.model.entitiy.TimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "REVIEW")

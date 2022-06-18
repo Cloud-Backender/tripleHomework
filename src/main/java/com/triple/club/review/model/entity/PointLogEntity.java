@@ -1,6 +1,6 @@
 package com.triple.club.review.model.entity;
 
-import com.triple.club.common.entitiy.CreateDtEntity;
+import com.triple.club.common.model.entitiy.CreateDtEntity;
 import lombok.*;
 
 import javax.persistence.*;
