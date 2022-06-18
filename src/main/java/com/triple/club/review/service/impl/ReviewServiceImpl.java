@@ -1,5 +1,7 @@
 package com.triple.club.review.service.impl;
 
+import com.triple.club.common.exception.ApiExceptionCode;
+import com.triple.club.common.exception.CustomException;
 import com.triple.club.review.model.dto.ReviewDto;
 import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.model.entity.PointLogEntity;
@@ -9,6 +11,7 @@ import com.triple.club.review.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
             addPoint(event, "+1 Point : 장소의 첫 리뷰 .");
         } else {
-            throw new Exception("해당 장소에 이미 리뷰를 작성함");
+            throw new CustomException(ApiExceptionCode.ALREADY_EXIST_REVIEW);
         }
 
         ReviewEntity reviewEntity = ReviewEntity.builder()
@@ -83,7 +86,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (reviewEntity.isPresent()) {
             modReivew(eventReview, reviewEntity.get());
         } else {
-            throw new Exception("수정할 리뷰가 없음.");
+            throw new CustomException(ApiExceptionCode.NOT_EXIST_REVIEW);
         }
 
     }
@@ -92,7 +95,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
         } else {
-            throw new Exception("삭제할 리뷰가 없음.");
+            throw new CustomException(ApiExceptionCode.NOT_EXIST_REVIEW);
         }
         em.remove(reviewEntity.get());
     }
