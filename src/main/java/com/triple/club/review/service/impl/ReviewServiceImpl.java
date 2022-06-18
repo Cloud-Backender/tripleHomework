@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -54,7 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     public void addEvent(ReviewDto event) throws Exception {
         if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
-            addPoint(event, "장소의 첫 리뷰 +1 Point.");
+            addPoint(event, "+1 Point : 장소의 첫 리뷰 .");
         } else {
             throw new Exception("해당 장소에 이미 리뷰를 작성함");
         }
@@ -73,17 +71,17 @@ public class ReviewServiceImpl implements ReviewService {
 
 
         if (event.getContent().length() > 0) {
-            addPoint(event, "리뷰 내용 작성 +1 Point.");
+            addPoint(event, "+1 Point : 리뷰 내용 작성");
         }
 
         if (event.getAttachedPhotoIds().length > 0) {
-            addPoint(event, "리뷰 사진 작성 +1 Point.");
+            addPoint(event, "+1 Point 리뷰 사진 작성");
         }
     }
     public void modEvent(ReviewDto eventReview) throws Exception {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
-            compareReview(eventReview, reviewEntity.get());
+            modReivew(eventReview, reviewEntity.get());
         } else {
             throw new Exception("수정할 리뷰가 없음.");
         }
@@ -92,13 +90,28 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteEvent(ReviewDto eventReview) throws Exception {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
-            compareReview(eventReview, reviewEntity.get());
+            deleteReview(reviewEntity.get());
         } else {
             throw new Exception("삭제할 리뷰가 없음.");
         }
+        em.remove(reviewEntity.get());
     }
 
-    void addPoint(ReviewDto reviewDto, String reason) {
+    private void deleteReview(ReviewEntity reviewEntity) {
+        Optional<ReviewEntity> firstReview = reviewRepository.findTopByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
+        if(firstReview.isPresent()) {
+            if(reviewEntity.getReviewId().equals(firstReview.get().getReviewId())) {
+                removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
+            }
+        }
+        if (reviewEntity.getContent().length() > 0) {
+            removePoint(reviewEntity.getUserId(), "-1 Point : 리뷰 삭제 포인트 회수(내용)");
+        }
+        if (reviewEntity.getAttachedPhotoIds().length() > 0) {
+            removePoint(reviewEntity.getUserId(), "-1 Point : 리뷰 삭제 포인트 회수(사진)");
+        }
+    }
+    private void addPoint(ReviewDto reviewDto, String reason) {
         Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
@@ -128,6 +141,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (presentEntity.isEmpty()) {
             pointLogEntity = PointLogEntity.builder()
                     .userId(userId)
+                    .reviewId("0 Point 초기화")
                     .reason(reason)
                     .totalPoint(0L)
                     .build();
@@ -135,32 +149,35 @@ public class ReviewServiceImpl implements ReviewService {
             pointLogEntity = PointLogEntity.builder()
                     .userId(userId)
                     .reason(reason)
+                    .reviewId(presentEntity.get().getReviewId())
                     .totalPoint(presentEntity.get().getTotalPoint() > 0 ? presentEntity.get().getTotalPoint() - 1 : 0)
                     .build();
         }
-        pointLogRepository.save(pointLogEntity);
+        em.persist(pointLogEntity);
+//        pointLogRepository.save(pointLogEntity);
     }
 
-    private void compareReview(ReviewDto eventReview, ReviewEntity preReview) {
+    private void modReivew(ReviewDto eventReview, ReviewEntity preReview) {
         if (eventReview.getContent().length() > 0 && !(preReview.getContent().length() > 0)) {
-            addPoint(eventReview, "기존 리뷰 내용 작성 +1 Point.");
+            addPoint(eventReview, "+1 Point : 기존 리뷰 내용 작성");
         } else if (!(eventReview.getContent().length() > 0) && preReview.getContent().length() > 0) {
-            removePoint(eventReview.getUserId(), "기존 리뷰 내용 삭제 -1 Point.");
+            removePoint(eventReview.getUserId(), "-1 Point : 기존 리뷰 내용 삭제");
         }
         preReview.updateContent(eventReview.getContent());
 
 
         if (eventReview.getAttachedPhotoIds().length > 0 && !(preReview.getAttachedPhotoIds().length() > 0)) {
-            addPoint(eventReview, "기존 리뷰 사진 작성 +1 Point.");
+            addPoint(eventReview, "+1 Point : 기존 리뷰 사진 작성");
         } else if (!(eventReview.getAttachedPhotoIds().length >0) && preReview.getAttachedPhotoIds().length() > 0) {
-            removePoint(eventReview.getUserId(), "기존 리뷰 사진 삭제 -1 Point.");
+            removePoint(eventReview.getUserId(), "-1 Point : 기존 리뷰 사진 삭제");
         }
 
         preReview.updatePhotos(eventReview.getAttachedPhotoIds().length > 0 ?
                 Arrays.stream(eventReview.getAttachedPhotoIds()).map(String::toString).collect(Collectors.joining(",")) : ""
                 );
 
-        reviewRepository.save(preReview);
+        em.persist(preReview);
+//        reviewRepository.save(preReview);
 
     }
 }
