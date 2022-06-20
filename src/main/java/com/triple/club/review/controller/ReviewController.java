@@ -2,6 +2,9 @@ package com.triple.club.review.controller;
 
 import com.triple.club.common.exception.ApiExceptionCode;
 import com.triple.club.common.exception.CustomException;
+import com.triple.club.common.model.dto.ResponseObject;
+import com.triple.club.review.model.contant.ActionType;
+import com.triple.club.review.model.contant.EventType;
 import com.triple.club.review.model.contant.ReviewConstant;
 import com.triple.club.review.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
@@ -35,16 +38,24 @@ public class ReviewController {
     }
 
     @PostMapping("/events")
-    public ResponseEntity<ReviewDto> reviewEvent(@RequestBody ReviewDto review) throws CustomException {
-        if(!review.getType().equals(ReviewConstant.REVIEW) || review.getType().isEmpty()) {
-            throw new CustomException(ApiExceptionCode.SYSTEM_ERROR);
+    public ResponseEntity<ResponseObject> reviewEvent(@RequestBody ReviewDto review) throws CustomException {
+        ResponseObject responseObject = new ResponseObject();
+        if(review.getType().equals(EventType.ERROR)) {
+            throw new CustomException(ApiExceptionCode.NOT_EXIST_EVENT_TYPE);
         }
+        if(review.getAction().equals(ActionType.ERROR)) {
+            throw new CustomException(ApiExceptionCode.NOT_EXIST_EVENT_ACTION_TYPE);
+        }
+
         ReviewDto result = reviewService.reviewEvent(review);
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        responseObject.setBody(result);
+        return new ResponseEntity<>(responseObject,HttpStatus.OK);
     }
     @GetMapping("/total-point/{userId}")
-    public ResponseEntity<InquirePointDto> getTotalPoint(@PathVariable String userId) throws CustomException {
+    public ResponseEntity<ResponseObject> getTotalPoint(@PathVariable String userId) throws CustomException {
+        ResponseObject responseObject = new ResponseObject();
         InquirePointDto result = reviewService.getTotalPoint(userId);
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        responseObject.setBody(result);
+        return new ResponseEntity<>(responseObject,HttpStatus.OK);
     }
 }

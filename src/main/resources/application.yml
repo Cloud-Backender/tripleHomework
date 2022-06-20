@@ -5,7 +5,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: com.triple.club.common.configuration.JPANamingConfig
     show-sql: true

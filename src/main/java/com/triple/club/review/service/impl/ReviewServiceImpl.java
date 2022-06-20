@@ -12,8 +12,8 @@ import com.triple.club.review.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PointLogRepository pointLogRepository;
@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto reviewEvent(ReviewDto event) throws CustomException {
-        ReviewEntity reviewEntity = new ReviewEntity();
+        ReviewEntity reviewEntity;
         switch (event.getAction()) {
             case ADD:
                 reviewEntity = addEvent(event);
@@ -50,8 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
                 deleteEvent(event);
                 return null;
             default:
-
-                break;
+                throw new CustomException(ApiExceptionCode.SYSTEM_ERROR);
         }
         ReviewDto reviewDto = ReviewDto.builder()
                 .userId(reviewEntity.getUserId())
@@ -80,7 +79,6 @@ public class ReviewServiceImpl implements ReviewService {
                 .placeId(event.getPlaceId())
                 .build();
         em.persist(reviewEntity);
-//        reviewRepository.save(reviewEntity);
 
 
         if (event.getContent().length() > 0) {
@@ -124,7 +122,8 @@ public class ReviewServiceImpl implements ReviewService {
             removePoint(reviewEntity.getUserId(), "-1 Point : 리뷰 삭제 포인트 회수(사진)");
         }
     }
-    private void addPoint(ReviewDto reviewDto, String reason) {
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    void addPoint(ReviewDto reviewDto, String reason) {
         Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
@@ -144,7 +143,6 @@ public class ReviewServiceImpl implements ReviewService {
                     .build();
         }
         em.persist(pointLogEntity);
-//        pointLogRepository.save(pointLogEntity);
 
     }
     private void removePoint(String userId, String reason) {
@@ -167,7 +165,6 @@ public class ReviewServiceImpl implements ReviewService {
                     .build();
         }
         em.persist(pointLogEntity);
-//        pointLogRepository.save(pointLogEntity);
     }
 
     private ReviewEntity modReview(ReviewDto eventReview, ReviewEntity preReview) {
