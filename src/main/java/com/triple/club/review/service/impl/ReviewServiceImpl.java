@@ -6,8 +6,8 @@ import com.triple.club.review.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
 import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.model.entity.PointLogEntity;
-import com.triple.club.review.repository.ReviewRepository;
-import com.triple.club.review.repository.PointLogRepository;
+import com.triple.club.review.repository.ReviewRepo;
+import com.triple.club.review.repository.PointLogRepo;
 import com.triple.club.review.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +24,15 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class ReviewServiceImpl implements ReviewService {
-    private final ReviewRepository reviewRepository;
-    private final PointLogRepository pointLogRepository;
+    private final ReviewRepo reviewRepo;
+    private final PointLogRepo pointLogRepository;
     private static final Logger logger = LoggerFactory.getLogger(ReviewServiceImpl.class);
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public ReviewServiceImpl(ReviewRepository reviewRepository, PointLogRepository pointLogRepository) {
-        this.reviewRepository = reviewRepository;
+    public ReviewServiceImpl(ReviewRepo reviewRepo, PointLogRepo pointLogRepository) {
+        this.reviewRepo = reviewRepo;
         this.pointLogRepository = pointLogRepository;
     }
 
@@ -63,9 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public ReviewEntity addEvent(ReviewDto event) throws CustomException {
-        if (!reviewRepository.existsByPlaceIdAndUserId(event.getPlaceId(), event.getUserId())) {
-            addPoint(event, "+1 Point : 장소의 첫 리뷰 .");
-        } else {
+        if (reviewRepo.existReviewInPlace(event.getPlaceId(), event.getUserId())) {
             throw new CustomException(ApiExceptionCode.ALREADY_EXIST_REVIEW);
         }
 
@@ -81,6 +79,9 @@ public class ReviewServiceImpl implements ReviewService {
         em.persist(reviewEntity);
 
 
+        if (reviewRepo.existsByPlaceId(event.getPlaceId())) {
+            addPoint(event, "+1 Point : 장소의 첫 리뷰");
+        }
         if (event.getContent().length() > 0) {
             addPoint(event, "+1 Point : 리뷰 내용 작성");
         }
@@ -91,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewEntity;
     }
     public ReviewEntity modEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             return modReview(eventReview, reviewEntity.get());
         } else {
@@ -99,7 +100,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
     public void deleteEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
         } else {
@@ -109,7 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void deleteReview(ReviewEntity reviewEntity) {
-        Optional<ReviewEntity> firstReview = reviewRepository.findTopByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
+        Optional<ReviewEntity> firstReview = reviewRepo.findTopByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
         if(firstReview.isPresent()) {
             if(reviewEntity.getReviewId().equals(firstReview.get().getReviewId())) {
                 removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
