@@ -63,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public ReviewEntity addEvent(ReviewDto event) throws CustomException {
-        if (reviewRepo.existReviewInPlace(event.getPlaceId(), event.getUserId())) {
+        if (reviewRepo.existMyReviewInPlace(event.getPlaceId(), event.getUserId())) {
             throw new CustomException(ApiExceptionCode.ALREADY_EXIST_REVIEW);
         }
 
@@ -79,7 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
         em.persist(reviewEntity);
 
 
-        if (reviewRepo.existsByPlaceId(event.getPlaceId())) {
+        if (reviewRepo.existReviewInPlace(event.getPlaceId())) {
             addPoint(event, "+1 Point : 장소의 첫 리뷰");
         }
         if (event.getContent().length() > 0) {
@@ -92,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewEntity;
     }
     public ReviewEntity modEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewIdAndUserId(eventReview.getReviewId(), eventReview.getUserId());
         if (reviewEntity.isPresent()) {
             return modReview(eventReview, reviewEntity.get());
         } else {
@@ -100,7 +100,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
     public void deleteEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewIdAndUserId(eventReview.getReviewId(), eventReview.getUserId());
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
         } else {
@@ -168,7 +168,8 @@ public class ReviewServiceImpl implements ReviewService {
         em.persist(pointLogEntity);
     }
 
-    private ReviewEntity modReview(ReviewDto eventReview, ReviewEntity preReview) {
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    ReviewEntity modReview(ReviewDto eventReview, ReviewEntity preReview) {
         if (eventReview.getContent().length() > 0 && !(preReview.getContent().length() > 0)) {
             addPoint(eventReview, "+1 Point : 기존 리뷰 내용 작성");
         } else if (!(eventReview.getContent().length() > 0) && preReview.getContent().length() > 0) {

@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ReviewRepo extends JpaRepository<ReviewEntity, Long>, ReviewRepoDSL {
     boolean existsByPlaceIdAndUserId(String placeId, String userId);
     boolean existsByPlaceId(String placeId);
-    Optional<ReviewEntity> findByReviewId(String reviewId);
+    Optional<ReviewEntity> findByReviewIdAndUserId(String reviewId, String userId);
     Optional<ReviewEntity> findTopByPlaceIdOrderByCreateTime(String placeId);
 }
