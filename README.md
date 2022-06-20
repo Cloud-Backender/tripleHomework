@@ -24,6 +24,36 @@ $sh start.sh
 3. tripleHomework 스프링 프로젝트의 ClubApplication App을 실행합니다. (Default Profile)
 4. [http://localhost:1111/](http://localhost:1111/) 로 api 통신을 합니다.
 
+## API List
+```json
+1. 리뷰 관련 이벤트 API
+POST/ {{API서버}}/events
+{
+    "type": "REVIEW",   //event의 타입입니다.
+    "action": "ADD",     //리뷰의 action 타입입니다. ADD-생성, MOD-수정, DELETE-삭제
+    "reviewId": "45fef7f2-f8e7-4798-8352-4c341d1af8c5",      //리뷰의 고유 ID 입니다 (UUID)
+    "content": "this is content",       //리뷰 내용입니다.
+    "attachedPhotoIds": ["344cadf8-da47-4f65-957b-109755ddc310","344cadf8-da47-4f65-957b-109755ddc311"],    //리뷰에 들어가는 사진 리스트입니다. (UUID)
+    "userId": "f39c8237-a550-433c-94df-80c952529788",                  //유저 ID입니다. (UUID)
+    "placeId": "521cbaf7-aa70-4c6c-a62e-23c1b4579ff1"     //장소 ID입니다. (UUID)
+}
+
+{
+    "type": "REVIEW",   //event의 타입입니다.
+    "action": "MOD",     //리뷰의 action 타입입니다. ADD-생성, MOD-수정, DELETE-삭제
+    "reviewId": "45fef7f2-f8e7-4798-8352-4c341d1af8c5",      //리뷰의 고유 ID 입니다 (UUID)
+    "content": "this is modified content",       //리뷰 내용입니다.
+}
+
+{
+    "type": "REVIEW",   //event의 타입입니다.
+    "action": "DELETE",     //리뷰의 action 타입입니다. ADD-생성, MOD-수정, DELETE-삭제
+    "reviewId": "45fef7f2-f8e7-4798-8352-4c341d1af8c5",      //리뷰의 고유 ID 입니다 (UUID)
+}
+
+2. 유저 포인트 조회 API
+GET/ {{API서버}}/total-point/{userId}
+```
 
 ## SQL QUERY
 
