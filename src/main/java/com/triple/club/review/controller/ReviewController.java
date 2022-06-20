@@ -3,6 +3,7 @@ package com.triple.club.review.controller;
 import com.triple.club.common.exception.ApiExceptionCode;
 import com.triple.club.common.exception.CustomException;
 import com.triple.club.review.model.contant.ReviewConstant;
+import com.triple.club.review.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
 import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.service.ReviewService;
@@ -34,16 +35,16 @@ public class ReviewController {
     }
 
     @PostMapping("/events")
-    public ResponseEntity<ReviewEntity> reviewEvent(@RequestBody ReviewDto review) throws CustomException {
+    public ResponseEntity<ReviewDto> reviewEvent(@RequestBody ReviewDto review) throws CustomException {
         if(!review.getType().equals(ReviewConstant.REVIEW) || review.getType().isEmpty()) {
             throw new CustomException(ApiExceptionCode.SYSTEM_ERROR);
         }
-        ReviewEntity reviewEntity = reviewService.reviewEvent(review);
-        return new ResponseEntity<>(reviewEntity,HttpStatus.OK);
+        ReviewDto result = reviewService.reviewEvent(review);
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/total-point/{userId}")
-    public ResponseEntity<Long> getTotalPoint(@PathVariable String userId) throws CustomException {
-        long result = reviewService.getTotalPoint(userId);
+    public ResponseEntity<InquirePointDto> getTotalPoint(@PathVariable String userId) throws CustomException {
+        InquirePointDto result = reviewService.getTotalPoint(userId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

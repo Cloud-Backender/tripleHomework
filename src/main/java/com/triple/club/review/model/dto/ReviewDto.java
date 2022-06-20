@@ -4,6 +4,7 @@ import com.triple.club.review.model.contant.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * fileName       : reviewDto
@@ -18,6 +19,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @Builder
+@NoArgsConstructor
 public class ReviewDto {
     String type;
     EventType action;

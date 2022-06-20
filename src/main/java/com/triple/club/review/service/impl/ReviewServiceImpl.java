@@ -2,6 +2,7 @@ package com.triple.club.review.service.impl;
 
 import com.triple.club.common.exception.ApiExceptionCode;
 import com.triple.club.common.exception.CustomException;
+import com.triple.club.review.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
 import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.model.entity.PointLogEntity;
@@ -11,6 +12,7 @@ import com.triple.club.review.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,23 +37,30 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewEntity reviewEvent(ReviewDto event) throws CustomException {
+    public ReviewDto reviewEvent(ReviewDto event) throws CustomException {
         ReviewEntity reviewEntity = new ReviewEntity();
         switch (event.getAction()) {
             case ADD:
                 reviewEntity = addEvent(event);
                 break;
             case MOD:
-                modEvent(event);
+                reviewEntity = modEvent(event);
                 break;
             case DELETE:
                 deleteEvent(event);
-                break;
+                return null;
             default:
 
                 break;
         }
-        return reviewEntity;
+        ReviewDto reviewDto = ReviewDto.builder()
+                .userId(reviewEntity.getUserId())
+                .placeId(reviewEntity.getPlaceId())
+                .reviewId(reviewEntity.getReviewId())
+                .content(reviewEntity.getContent())
+                .attachedPhotoIds(reviewEntity.getAttachedPhotoIds().split(","))
+                .build();
+        return reviewDto;
     }
 
     public ReviewEntity addEvent(ReviewDto event) throws CustomException {
@@ -83,14 +92,13 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return reviewEntity;
     }
-    public void modEvent(ReviewDto eventReview) throws CustomException {
+    public ReviewEntity modEvent(ReviewDto eventReview) throws CustomException {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
-            modReivew(eventReview, reviewEntity.get());
+            return modReview(eventReview, reviewEntity.get());
         } else {
             throw new CustomException(ApiExceptionCode.NOT_EXIST_REVIEW);
         }
-
     }
     public void deleteEvent(ReviewDto eventReview) throws CustomException {
         Optional<ReviewEntity> reviewEntity = reviewRepository.findByReviewId(eventReview.getReviewId());
@@ -162,7 +170,7 @@ public class ReviewServiceImpl implements ReviewService {
 //        pointLogRepository.save(pointLogEntity);
     }
 
-    private void modReivew(ReviewDto eventReview, ReviewEntity preReview) {
+    private ReviewEntity modReview(ReviewDto eventReview, ReviewEntity preReview) {
         if (eventReview.getContent().length() > 0 && !(preReview.getContent().length() > 0)) {
             addPoint(eventReview, "+1 Point : 기존 리뷰 내용 작성");
         } else if (!(eventReview.getContent().length() > 0) && preReview.getContent().length() > 0) {
@@ -182,15 +190,19 @@ public class ReviewServiceImpl implements ReviewService {
                 );
 
         em.persist(preReview);
-//        reviewRepository.save(preReview);
+        return preReview;
 
     }
 
     @Override
-    public long getTotalPoint(String userId) throws CustomException {
+    public InquirePointDto getTotalPoint(String userId) throws CustomException {
         Optional<PointLogEntity> pointLogEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(userId);
         if (pointLogEntity.isPresent()){
-            return pointLogEntity.get().getTotalPoint();
+            InquirePointDto result = InquirePointDto.builder()
+                    .userId(userId)
+                    .totalPoint(pointLogEntity.get().getTotalPoint())
+                    .build();
+            return result;
         } else {
             throw new CustomException(ApiExceptionCode.NOT_EXIST_USER);
         }
