@@ -110,7 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void deleteReview(ReviewEntity reviewEntity) {
-        Optional<ReviewEntity> firstReview = reviewRepo.findTopByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
+        Optional<ReviewEntity> firstReview = reviewRepo.findTop1ByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
         if(firstReview.isPresent()) {
             if(reviewEntity.getReviewId().equals(firstReview.get().getReviewId())) {
                 removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
@@ -125,7 +125,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     void addPoint(ReviewDto reviewDto, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(reviewDto.getUserId());
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
@@ -147,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
     private void removePoint(String userId, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(userId);
+        Optional<PointLogEntity> presentEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
         PointLogEntity pointLogEntity;
 
         if (presentEntity.isEmpty()) {
@@ -195,7 +195,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public InquirePointDto getTotalPoint(String userId) throws CustomException {
-        Optional<PointLogEntity> pointLogEntity = pointLogRepository.findTopByUserIdOrderBySeqDesc(userId);
+        Optional<PointLogEntity> pointLogEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
         if (pointLogEntity.isPresent()){
             InquirePointDto result = InquirePointDto.builder()
                     .userId(userId)

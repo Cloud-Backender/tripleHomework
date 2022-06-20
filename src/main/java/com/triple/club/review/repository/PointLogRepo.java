@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PointLogRepo extends JpaRepository<PointLogEntity, Long>, ReviewRepoDSL {
-    Optional<PointLogEntity> findTopByUserIdOrderBySeqDesc(String userId);
+    Optional<PointLogEntity> findTop1ByUserIdOrderBySeqDesc(String userId);
 }

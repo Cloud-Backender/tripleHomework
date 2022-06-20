@@ -12,5 +12,5 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long>, ReviewRep
     boolean existsByPlaceIdAndUserId(String placeId, String userId);
     boolean existsByPlaceId(String placeId);
     Optional<ReviewEntity> findByReviewIdAndUserId(String reviewId, String userId);
-    Optional<ReviewEntity> findTopByPlaceIdOrderByCreateTime(String placeId);
+    Optional<ReviewEntity> findTop1ByPlaceIdOrderByCreateTime(String placeId);
 }
