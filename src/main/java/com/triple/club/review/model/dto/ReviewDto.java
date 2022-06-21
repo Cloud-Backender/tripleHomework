@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * fileName       : reviewDto
  * author         : kimjaejung
@@ -21,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewDto {
+public class ReviewDto implements Serializable {
     EventType type;
     ActionType action;
     String reviewId;

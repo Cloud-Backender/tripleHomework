@@ -58,4 +58,8 @@ public class ReviewController {
         responseObject.setBody(result);
         return new ResponseEntity<>(responseObject,HttpStatus.OK);
     }
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<>("test",HttpStatus.OK);
+    }
 }

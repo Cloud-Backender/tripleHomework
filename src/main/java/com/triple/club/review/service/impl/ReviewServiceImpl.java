@@ -28,12 +28,13 @@ public class ReviewServiceImpl implements ReviewService {
     private final PointLogRepo pointLogRepository;
     private static final Logger logger = LoggerFactory.getLogger(ReviewServiceImpl.class);
     @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
 
     @Autowired
-    public ReviewServiceImpl(ReviewRepo reviewRepo, PointLogRepo pointLogRepository) {
+    public ReviewServiceImpl(ReviewRepo reviewRepo, PointLogRepo pointLogRepository, EntityManager em) {
         this.reviewRepo = reviewRepo;
         this.pointLogRepository = pointLogRepository;
+        this.em = em;
     }
 
     @Override
@@ -92,7 +93,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewEntity;
     }
     public ReviewEntity modEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByPlaceIdAndUserId(eventReview.getPlaceId(), eventReview.getUserId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             return modReview(eventReview, reviewEntity.get());
         } else {
@@ -100,7 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
     public void deleteEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByPlaceIdAndUserId(eventReview.getPlaceId(), eventReview.getUserId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewId(eventReview.getReviewId());
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
         } else {
@@ -110,12 +111,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void deleteReview(ReviewEntity reviewEntity) {
-        Optional<ReviewEntity> firstReview = reviewRepo.findTop1ByPlaceIdOrderByCreateTime(reviewEntity.getPlaceId());
-        if(firstReview.isPresent()) {
-            if(reviewEntity.getReviewId().equals(firstReview.get().getReviewId())) {
-                removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
-            }
-        }
+        Optional<ReviewEntity> firstReview = reviewRepo.findTop1ByPlaceId(reviewEntity.getPlaceId());
+//        if(firstReview.isPresent()) {
+//            if(reviewEntity.getReviewId().equals(firstReview.get().getReviewId())) {
+//                removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
+//            }
+//        }
+        firstReview.ifPresent(data ->  {
+                if(data.getReviewId().equals(reviewEntity.getReviewId())){
+                    removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");
+                }
+        });
+
         if (reviewEntity.getContent().length() > 0) {
             removePoint(reviewEntity.getUserId(), "-1 Point : 리뷰 삭제 포인트 회수(내용)");
         }
