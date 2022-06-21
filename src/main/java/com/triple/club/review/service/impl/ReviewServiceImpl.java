@@ -92,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewEntity;
     }
     public ReviewEntity modEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewIdAndUserId(eventReview.getReviewId(), eventReview.getUserId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByPlaceIdAndUserId(eventReview.getPlaceId(), eventReview.getUserId());
         if (reviewEntity.isPresent()) {
             return modReview(eventReview, reviewEntity.get());
         } else {
@@ -100,7 +100,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
     public void deleteEvent(ReviewDto eventReview) throws CustomException {
-        Optional<ReviewEntity> reviewEntity = reviewRepo.findByReviewIdAndUserId(eventReview.getReviewId(), eventReview.getUserId());
+        Optional<ReviewEntity> reviewEntity = reviewRepo.findByPlaceIdAndUserId(eventReview.getPlaceId(), eventReview.getUserId());
         if (reviewEntity.isPresent()) {
             deleteReview(reviewEntity.get());
         } else {

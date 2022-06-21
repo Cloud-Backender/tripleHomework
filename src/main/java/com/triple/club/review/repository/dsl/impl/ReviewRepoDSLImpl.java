@@ -21,7 +21,7 @@ public class ReviewRepoDSLImpl implements ReviewRepoDSL {
     public boolean existMyReviewInPlace(String placeId, String userId) {
         QReviewEntity reviewEntity = new QReviewEntity("review");
 
-        boolean isExist  = jpaQueryFactory.select(reviewEntity.placeId, reviewEntity.userId)
+        boolean isExist  = jpaQueryFactory.selectOne()
                 .from(reviewEntity)
                 .where(reviewEntity.placeId.eq(placeId).and(reviewEntity.userId.eq(userId)))
                 .fetchFirst() != null;
@@ -32,7 +32,7 @@ public class ReviewRepoDSLImpl implements ReviewRepoDSL {
     public boolean existReviewInPlace(String placeId) {
         QReviewEntity reviewEntity = new QReviewEntity("review");
 
-        boolean isExist  = jpaQueryFactory.select(reviewEntity.placeId, reviewEntity.userId)
+        boolean isExist  = jpaQueryFactory.selectOne()
                 .from(reviewEntity)
                 .where(reviewEntity.placeId.eq(placeId))
                 .fetchFirst() != null;
