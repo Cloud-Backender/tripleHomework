@@ -5,10 +5,8 @@ import com.triple.club.common.exception.CustomException;
 import com.triple.club.common.model.dto.ResponseObject;
 import com.triple.club.review.model.contant.ActionType;
 import com.triple.club.review.model.contant.EventType;
-import com.triple.club.review.model.contant.ReviewConstant;
-import com.triple.club.review.model.dto.InquirePointDto;
+import com.triple.club.point.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.model.entity.ReviewEntity;
 import com.triple.club.review.service.ReviewService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,13 +46,6 @@ public class ReviewController {
         }
 
         ReviewDto result = reviewService.reviewEvent(review);
-        responseObject.setBody(result);
-        return new ResponseEntity<>(responseObject,HttpStatus.OK);
-    }
-    @GetMapping("/total-point/{userId}")
-    public ResponseEntity<ResponseObject> getTotalPoint(@PathVariable String userId) throws CustomException {
-        ResponseObject responseObject = new ResponseObject();
-        InquirePointDto result = reviewService.getTotalPoint(userId);
         responseObject.setBody(result);
         return new ResponseEntity<>(responseObject,HttpStatus.OK);
     }

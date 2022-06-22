@@ -1,6 +1,6 @@
-package com.triple.club.review.repository;
+package com.triple.club.point.repository;
 
-import com.triple.club.review.model.entity.PointLogEntity;
+import com.triple.club.point.model.entity.PointLogEntity;
 import com.triple.club.review.repository.dsl.ReviewRepoDSL;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

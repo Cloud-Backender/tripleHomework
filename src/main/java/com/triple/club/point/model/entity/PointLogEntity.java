@@ -1,4 +1,4 @@
-package com.triple.club.review.model.entity;
+package com.triple.club.point.model.entity;
 
 import com.triple.club.common.model.entitiy.CreateDtEntity;
 import lombok.*;

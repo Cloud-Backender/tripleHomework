@@ -1,4 +1,4 @@
-package com.triple.club.review.model.dto;
+package com.triple.club.point.model.dto;
 
 import lombok.Builder;
 import lombok.Getter;

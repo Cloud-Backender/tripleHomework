@@ -2,10 +2,11 @@ package com.triple.club.review.service;
 
 import com.google.gson.Gson;
 import com.triple.club.common.exception.CustomException;
+import com.triple.club.point.service.PointService;
 import com.triple.club.review.model.contant.ActionType;
 import com.triple.club.review.model.contant.EventType;
 import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.repository.PointLogRepo;
+import com.triple.club.point.repository.PointLogRepo;
 import com.triple.club.review.repository.ReviewRepo;
 import com.triple.club.review.service.impl.ReviewServiceImpl;
 import org.junit.jupiter.api.*;
@@ -36,11 +37,12 @@ class ReviewServiceTest {
 
     @InjectMocks
     private ReviewServiceImpl service;
+    private PointService pointService;
 
 
     @BeforeEach
     void setUp() {
-        this.service = new ReviewServiceImpl(this.reviewRepo, this.pointLogRepository, em);
+        this.service = new ReviewServiceImpl(this.reviewRepo, this.pointLogRepository, pointService, em);
 
     }
 
