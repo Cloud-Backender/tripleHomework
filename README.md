@@ -1,6 +1,5 @@
 # Triple Backend HomeWork
 
-트리플 백엔드 과제입니다.
 
 ## Compatibility
 
