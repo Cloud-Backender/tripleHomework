@@ -62,6 +62,15 @@ POST/ {{API서버}}/events
 2. 유저 포인트 조회 API
 GET/ {{API서버}}/total-point/{userId}
 ```
+##Exception List
+| Exception API Name | Exception Code | Exception Content  | Remark |
+| --- | --- | --- | --- |
+| ALREADY_EXIST_REVIEW | 100 | 해당 장소에 이미 리뷰가 존재합니다. | 해당 place에 이미 review를 작성된 경우 |
+| NOT_EXIST_REVIEW | 101 | 리뷰가 존재하지 않습니다. | MOD/DELETE 요청에 해당하는 ReviewId가 없을 경우 |
+| NOT_EXIST_USER | 102 | 유저가 존재하지 않습니다. | 총점(/getTotalPoint)조회 할 때 UserId가 없는 경우 |
+| NOT_EXIST_EVENT_TYPE | 600 | 존재하지 않는 type 입니다. | /events 의 type이 Review가 아닐경우 |
+| NOT_EXIST_EVENT_ACTION_TYPE | 601 | 존재하지 않는 action 입니다. | /events 의 action이 ADD/MOD/DELETE가 아닌경우 |
+| SYSTEM_ERROR | 599 | 시스템 에러 | 전체적인 시스템 에러 |
 
 ## SQL QUERY
 
