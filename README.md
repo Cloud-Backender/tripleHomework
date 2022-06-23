@@ -85,7 +85,7 @@ CREATE TABLE `POINT_LOG` (
   `USER_ID` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`SEQ`),
   KEY `USER_ID_IDX` (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- `data`.REVIEW definition
