@@ -17,7 +17,11 @@
 - Docker 최신 버전이 설치된 가정하에 실행합니다.
 - Mysql 포트는 3306을 사용합니다. (쓰고 있다면 잠시 중지)
 1. tripleHomework 디렉토리로 이동합니다.
-2. maven 빌드를 합니다.
+2. start.sh 을 실행합니다. (Mysql 이미지를 생성하고 table을 넣어주는 작업입니다.)
+```
+$sh start.sh
+```
+3. maven 빌드를 합니다.
    1. ```
       mvn clean install -f pom.xml
       ```
@@ -25,12 +29,8 @@
    2. ```
       mvn clean install -DskipTests=true -f pom.xml
       ```
-3. start.sh 을 실행합니다.
-```
-$sh start.sh
-```
-4. tripleHomework 스프링 프로젝트의 ClubApplication App을 실행합니다. (Default Profile)
-5. [http://localhost:1111/](http://localhost:1111/) 로 api 통신을 합니다.
+3. tripleHomework 스프링 프로젝트의 ClubApplication App을 실행합니다. (Default Profile)
+4. [http://localhost:1111/](http://localhost:1111/) 로 api 통신을 합니다.
 
 ## API List
 ```json
