@@ -62,7 +62,7 @@ POST/ {{API서버}}/events
 GET/ {{API서버}}/total-point/{userId}
 ```
 
-##Exception List
+## Exception List
 | Exception API Name | Exception Code | Exception Content  | Remark |
 | --- | --- | --- | --- |
 | ALREADY_EXIST_REVIEW | 100 | 해당 장소에 이미 리뷰가 존재합니다. | 해당 place에 이미 review를 작성된 경우 |
