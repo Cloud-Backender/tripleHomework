@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepo extends JpaRepository<ReviewEntity, Long>, ReviewRepoDSL {
     Optional<ReviewEntity> findByReviewId(String reviewId);
-    Optional<ReviewEntity> findTop1ByPlaceId(String placeId);
+    Optional<ReviewEntity> findTop1ByPlaceIdOrderByCreateTimeAsc(String placeId);
 }

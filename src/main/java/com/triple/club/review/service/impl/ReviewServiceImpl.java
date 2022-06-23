@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public void deleteReview(ReviewEntity reviewEntity) {
-        Optional<ReviewEntity> firstReview = reviewRepo.findTop1ByPlaceId(reviewEntity.getPlaceId());
+        Optional<ReviewEntity> firstReview = reviewRepo.findTop1ByPlaceIdOrderByCreateTimeAsc(reviewEntity.getPlaceId());
         firstReview.ifPresent(data ->  {
                 if(data.getReviewId().equals(reviewEntity.getReviewId())){
                     pointService.removePoint(reviewEntity.getUserId(), "-1 Point : 장소의 첫 리뷰 포인트 회수");

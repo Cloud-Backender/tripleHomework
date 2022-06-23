@@ -14,7 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -57,7 +58,7 @@ class ReviewRepoTest {
         void findTop1ByPlaceId() {
                 findByReviewId();
 
-                assertTrue(reviewRepo.findTop1ByPlaceId("PLACE123").isPresent());
+                assertTrue(reviewRepo.findTop1ByPlaceIdOrderByCreateTimeAsc("PLACE123").isPresent());
         }
 
     }
