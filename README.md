@@ -48,7 +48,8 @@ POST/ {{API서버}}/events
     "type": "REVIEW",   //event의 타입입니다.
     "action": "MOD",     //리뷰의 action 타입입니다. ADD-생성, MOD-수정, DELETE-삭제
     "reviewId": "45fef7f2-f8e7-4798-8352-4c341d1af8c5",      //리뷰의 고유 ID 입니다 (UUID)
-    "content": "this is modified content",       //리뷰 내용입니다.
+    "content": "this is modified content"       //리뷰 내용입니다.
+    "attachedPhotoIds": ["df1d6w6q-f8e7-4995-1353-a1f6d8c9z4x5", "21a6s5d6-zv5d-4358-9795-y5y6n8i9i4y5"]        //리뷰 이미지 ID 입니다. (UUID)
 }
 
 {
