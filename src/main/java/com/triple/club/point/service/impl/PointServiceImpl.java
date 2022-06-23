@@ -2,7 +2,7 @@ package com.triple.club.point.service.impl;
 
 import com.triple.club.common.exception.ApiExceptionCode;
 import com.triple.club.common.exception.CustomException;
-import com.triple.club.point.model.dto.InquirePointDto;
+import com.triple.club.point.model.dto.PointInquireDto;
 import com.triple.club.point.model.entity.PointLogEntity;
 import com.triple.club.point.repository.PointLogRepo;
 import com.triple.club.point.service.PointService;
@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
+@Transactional(isolation = Isolation.READ_COMMITTED)
 @Service
 public class PointServiceImpl implements PointService {
     private final PointLogRepo pointLogRepository;
@@ -32,10 +33,10 @@ public class PointServiceImpl implements PointService {
     @Override
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public void addPoint(ReviewDto reviewDto, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(reviewDto.getUserId());
+        Optional<PointLogEntity> pointEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(reviewDto.getUserId());
         PointLogEntity pointLogEntity;
 
-        if (presentEntity.isEmpty()) {
+        if (pointEntity.isEmpty()) {
             pointLogEntity = PointLogEntity.builder()
                     .userId(reviewDto.getUserId())
                     .reason(reason)
@@ -46,19 +47,20 @@ public class PointServiceImpl implements PointService {
             pointLogEntity = PointLogEntity.builder()
                     .userId(reviewDto.getUserId())
                     .reason(reason)
-                    .totalPoint(presentEntity.get().getTotalPoint() + 1)
+                    .totalPoint(pointEntity.get().getTotalPoint() + 1)
                     .reviewId(reviewDto.getReviewId())
                     .build();
         }
         em.persist(pointLogEntity);
-
     }
+
     @Override
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public void removePoint(String userId, String reason) {
-        Optional<PointLogEntity> presentEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
+        Optional<PointLogEntity> pointEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
         PointLogEntity pointLogEntity;
 
-        if (presentEntity.isEmpty()) {
+        if (pointEntity.isEmpty()) {
             pointLogEntity = PointLogEntity.builder()
                     .userId(userId)
                     .reviewId("0 Point 초기화")
@@ -69,20 +71,22 @@ public class PointServiceImpl implements PointService {
             pointLogEntity = PointLogEntity.builder()
                     .userId(userId)
                     .reason(reason)
-                    .reviewId(presentEntity.get().getReviewId())
-                    .totalPoint(presentEntity.get().getTotalPoint() > 0 ? presentEntity.get().getTotalPoint() - 1 : 0)
+                    .reviewId(pointEntity.get().getReviewId())
+                    .totalPoint(pointEntity.get().getTotalPoint() > 0 ?
+                            pointEntity.get().getTotalPoint() - 1 : 0)
                     .build();
         }
         em.persist(pointLogEntity);
     }
 
     @Override
-    public InquirePointDto getTotalPoint(String userId) throws CustomException {
-        Optional<PointLogEntity> pointLogEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
-        if (pointLogEntity.isPresent()){
-            InquirePointDto result = InquirePointDto.builder()
+    public PointInquireDto getTotalPoint(String userId) throws CustomException {
+        Optional<PointLogEntity> pointEntity = pointLogRepository.findTop1ByUserIdOrderBySeqDesc(userId);
+        PointInquireDto result;
+        if (pointEntity.isPresent()){
+            result = PointInquireDto.builder()
                     .userId(userId)
-                    .totalPoint(pointLogEntity.get().getTotalPoint())
+                    .totalPoint(pointEntity.get().getTotalPoint())
                     .build();
             return result;
         } else {

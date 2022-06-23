@@ -4,16 +4,6 @@ import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
-/**
- * fileName       : JPANamingConfig
- * author         : kimjaejung
- * createDate     : 2022/06/16
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022/06/16        kimjaejung       최초 생성
- *
- */
 public class JPANamingConfig implements PhysicalNamingStrategy {
     @Override
     public Identifier toPhysicalCatalogName(final Identifier identifier, final JdbcEnvironment jdbcEnv) {
@@ -48,7 +38,6 @@ public class JPANamingConfig implements PhysicalNamingStrategy {
         final String replacement = "$1_$2";
         final String newName = identifier.getText()
                 .replaceAll(regex, replacement)
-                //.toLowerCase();
                 .toUpperCase();
         return Identifier.toIdentifier(newName);
     }

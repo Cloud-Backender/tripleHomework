@@ -1,7 +1,7 @@
 package com.triple.club.point.service;
 
 import com.triple.club.common.exception.CustomException;
-import com.triple.club.point.model.dto.InquirePointDto;
+import com.triple.club.point.model.dto.PointInquireDto;
 import com.triple.club.review.model.dto.ReviewDto;
 
 public interface PointService {
@@ -9,5 +9,5 @@ public interface PointService {
 
     void removePoint(String userId, String reason);
 
-    InquirePointDto getTotalPoint(String userId) throws CustomException;
+    PointInquireDto getTotalPoint(String userId) throws CustomException;
 }

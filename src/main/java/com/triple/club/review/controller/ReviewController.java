@@ -5,7 +5,6 @@ import com.triple.club.common.exception.CustomException;
 import com.triple.club.common.model.dto.ResponseObject;
 import com.triple.club.review.model.contant.ActionType;
 import com.triple.club.review.model.contant.EventType;
-import com.triple.club.point.model.dto.InquirePointDto;
 import com.triple.club.review.model.dto.ReviewDto;
 import com.triple.club.review.service.ReviewService;
 import org.apache.logging.log4j.LogManager;
@@ -15,18 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * fileName       : ReviewController
- * author         : kimjaejung
- * createDate     : 2022/06/16
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022/06/16        kimjaejung       최초 생성
- */
 @RestController
 public class ReviewController {
-    private final Logger logger = LogManager.getLogger(ReviewController.class);
     private final ReviewService reviewService;
 
 

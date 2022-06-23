@@ -1,7 +1,8 @@
-package com.triple.club.review.repository;
+package com.triple.club.point.repository;
 
 import com.triple.club.common.configuration.BeanConfig;
 import com.triple.club.review.model.entity.ReviewEntity;
+import com.triple.club.review.repository.ReviewRepo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,30 +13,31 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Import(BeanConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ReviewRepoTest {
+class PointLogRepoTest {
 
+    private PointLogRepo pointLogRepo;
     private ReviewRepo reviewRepo;
 
     @Autowired
-    public ReviewRepoTest(ReviewRepo reviewRepo) {
+    public PointLogRepoTest(PointLogRepo pointLogRepo, ReviewRepo reviewRepo) {
+        this.pointLogRepo = pointLogRepo;
         this.reviewRepo = reviewRepo;
     }
 
+
+
     @Nested
-    @DisplayName("리뷰 레포 테스트")
-    class 리뷰_레포_테스트 {
+    @DisplayName("포인트_레포_테스트")
+    class 포인트_레포_테스트 {
 
         @DisplayName("ReviewId로 검색")
         @Test
-        void findByReviewId() {
+        void findTop1ByUserIdOrderBySeqDesc() {
             ReviewEntity reviewEntity = ReviewEntity.builder()
                     .placeId("PLACE123")
                     .reviewId("REVIEW123")
@@ -43,22 +45,10 @@ class ReviewRepoTest {
                     .userId("JJUSER123")
                     .content("content test")
                     .build();
+            reviewRepo.save(reviewEntity);
 
-            ReviewEntity savedReview = reviewRepo.save(reviewEntity);
-            assertEquals(reviewEntity.getReviewId(), savedReview.getReviewId());
+            pointLogRepo.findTop1ByUserIdOrderBySeqDesc("JJUSER123");
 
-            Optional<ReviewEntity> findedReview = reviewRepo.findByReviewId(savedReview.getReviewId());
-
-            assertTrue(findedReview.isPresent());
         }
-
-        @Test
-        @DisplayName("삭제 시 보너스 포인트 유무")
-        void findTop1ByPlaceId() {
-                findByReviewId();
-
-                assertTrue(reviewRepo.findTop1ByPlaceId("PLACE123").isPresent());
-        }
-
     }
 }

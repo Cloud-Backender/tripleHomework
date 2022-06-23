@@ -17,12 +17,20 @@
 - Docker 최신 버전이 설치된 가정하에 실행합니다.
 - Mysql 포트는 3306을 사용합니다. (쓰고 있다면 잠시 중지)
 1. tripleHomework 디렉토리로 이동합니다.
-2. start.sh 을 실행합니다.
+2. maven 빌드를 합니다.
+   1. ```
+      mvn clean install -f pom.xml
+      ```
+      Error 발생 시 2-2 명령어 실행
+   2. ```
+      mvn clean install -DskipTests=true -f pom.xml
+      ```
+3. start.sh 을 실행합니다.
 ```
 $sh start.sh
 ```
-3. tripleHomework 스프링 프로젝트의 ClubApplication App을 실행합니다. (Default Profile)
-4. [http://localhost:1111/](http://localhost:1111/) 로 api 통신을 합니다.
+4. tripleHomework 스프링 프로젝트의 ClubApplication App을 실행합니다. (Default Profile)
+5. [http://localhost:1111/](http://localhost:1111/) 로 api 통신을 합니다.
 
 ## API List
 ```json
@@ -58,25 +66,32 @@ GET/ {{API서버}}/total-point/{userId}
 ## SQL QUERY
 
 ```
-CREATE TABLE `POINT_LOG` (
-                             `SEQ` bigint NOT NULL AUTO_INCREMENT,
-                             `CREATE_DT` datetime NOT NULL,
-                             `REASON` varchar(255) DEFAULT NULL,
-                             `REVIEW_ID` varchar(36)  DEFAULT NULL,
-                             `TOTAL_POINT` bigint DEFAULT NULL,
-                             `USER_ID` varchar(36)  DEFAULT NULL,
-                             PRIMARY KEY (`SEQ`)
-) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- `data`.POINT_LOG definition
 
+CREATE TABLE `POINT_LOG` (
+  `SEQ` bigint NOT NULL AUTO_INCREMENT,
+  `CREATE_DT` datetime NOT NULL,
+  `REASON` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `REVIEW_ID` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `TOTAL_POINT` bigint DEFAULT NULL,
+  `USER_ID` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`SEQ`),
+  KEY `USER_ID_IDX` (`USER_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- `data`.REVIEW definition
 
 CREATE TABLE `REVIEW` (
-                          `REVIEW_ID` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                          `CREATE_DT` datetime NOT NULL,
-                          `UPDATE_DT` datetime NOT NULL,
-                          `ATTACHED_PHOTO_IDS` varchar(1000)  DEFAULT NULL,
-                          `CONTENT` varchar(1000)  DEFAULT NULL,
-                          `PLACE_ID` varchar(36)  DEFAULT NULL,
-                          `USER_ID` varchar(36)  DEFAULT NULL,
-                          PRIMARY KEY (`REVIEW_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-```
+  `REVIEW_ID` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `CREATE_DT` datetime NOT NULL,
+  `UPDATE_DT` datetime NOT NULL,
+  `ATTACHED_PHOTO_IDS` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `CONTENT` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `PLACE_ID` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `USER_ID` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`REVIEW_ID`),
+  KEY `USER_ID_PLACE_ID_IDX` (`PLACE_ID`,`USER_ID`) USING BTREE,
+  KEY `PLACE_ID_IDX` (`PLACE_ID`) USING BTREE,
+  KEY `USER_ID_IDX` (`USER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;```

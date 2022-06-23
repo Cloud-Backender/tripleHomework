@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class InquirePointDto {
+public class PointInquireDto {
     private String userId;
     private Long totalPoint;
 }

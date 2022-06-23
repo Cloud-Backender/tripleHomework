@@ -5,6 +5,8 @@ import com.triple.club.review.model.entity.QReviewEntity;
 import com.triple.club.review.repository.dsl.ReviewRepoDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -29,13 +31,13 @@ public class ReviewRepoDSLImpl implements ReviewRepoDSL {
     }
 
     @Override
-    public boolean existReviewInPlace(String placeId) {
+    public boolean notExistReviewInPlace(String placeId) {
         QReviewEntity reviewEntity = new QReviewEntity("review");
 
-        boolean isExist  = jpaQueryFactory.selectOne()
+        boolean isNotExist  = jpaQueryFactory.selectOne()
                 .from(reviewEntity)
                 .where(reviewEntity.placeId.eq(placeId))
-                .fetchFirst() != null;
-        return isExist;
+                .fetchFirst() == null;
+        return isNotExist;
     }
 }
