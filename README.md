@@ -23,7 +23,7 @@ $sh start.sh
    1. ```
       mvn clean install -f pom.xml
       ```
-      Error 발생 시 2-2 명령어 실행
+      Error 발생 시 3-2 명령어 실행
    2. ```
       mvn clean install -DskipTests=true -f pom.xml
       ```
