@@ -61,6 +61,7 @@ POST/ {{API서버}}/events
 2. 유저 포인트 조회 API
 GET/ {{API서버}}/total-point/{userId}
 ```
+
 ##Exception List
 | Exception API Name | Exception Code | Exception Content  | Remark |
 | --- | --- | --- | --- |
@@ -102,4 +103,4 @@ CREATE TABLE `REVIEW` (
   KEY `USER_ID_PLACE_ID_IDX` (`PLACE_ID`,`USER_ID`) USING BTREE,
   KEY `PLACE_ID_IDX` (`PLACE_ID`) USING BTREE,
   KEY `USER_ID_IDX` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;```
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
