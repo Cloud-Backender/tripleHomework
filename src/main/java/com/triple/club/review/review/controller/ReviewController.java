@@ -1,14 +1,12 @@
-package com.triple.club.review.controller;
+package com.triple.club.review.review.controller;
 
 import com.triple.club.common.exception.ApiExceptionCode;
 import com.triple.club.common.exception.CustomException;
 import com.triple.club.common.model.dto.ResponseObject;
-import com.triple.club.review.model.contant.ActionType;
-import com.triple.club.review.model.contant.EventType;
-import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.service.ReviewService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.triple.club.review.review.model.contant.ActionType;
+import com.triple.club.review.review.model.contant.EventType;
+import com.triple.club.review.review.model.dto.ReviewDto;
+import com.triple.club.review.review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

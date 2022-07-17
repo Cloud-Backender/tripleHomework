@@ -1,6 +1,7 @@
-package com.triple.club.review.model.entity;
+package com.triple.club.review.review.model.entity;
 
 import com.triple.club.common.model.entitiy.TimeEntity;
+import com.triple.club.review.place.model.entity.PlaceEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +29,9 @@ public class ReviewEntity extends TimeEntity {
     @Column(name = "USER_ID")
     private String userId;
 
-    @Column(name = "PLACE_ID")
-    private String placeId;
+    @ManyToOne(targetEntity = PlaceEntity.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PLACE_ID", referencedColumnName = "PLACE_ID")
+    private PlaceEntity place;
 
     public void updateContent(String content) {
         this.content = content;
@@ -37,5 +39,9 @@ public class ReviewEntity extends TimeEntity {
 
     public void updatePhotos(String photos) {
         this.attachedPhotoIds = photos;
+    }
+
+    public PlaceEntity updatePlace(PlaceEntity placeEntity) {
+        return placeEntity;
     }
 }

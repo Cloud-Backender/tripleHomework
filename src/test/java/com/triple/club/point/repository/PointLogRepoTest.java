@@ -1,8 +1,8 @@
 package com.triple.club.point.repository;
 
 import com.triple.club.common.configuration.BeanConfig;
-import com.triple.club.review.model.entity.ReviewEntity;
-import com.triple.club.review.repository.ReviewRepo;
+import com.triple.club.review.review.model.entity.ReviewEntity;
+import com.triple.club.review.review.repository.ReviewRepo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class PointLogRepoTest {
         @Test
         void findTop1ByUserIdOrderBySeqDesc() {
             ReviewEntity reviewEntity = ReviewEntity.builder()
-                    .placeId("PLACE123")
+//                    .placeId("PLACE123")
                     .reviewId("REVIEW123")
                     .attachedPhotoIds("test,test1")
                     .userId("JJUSER123")

@@ -2,11 +2,12 @@ package com.triple.club.review.service;
 
 import com.triple.club.common.exception.CustomException;
 import com.triple.club.point.service.PointService;
-import com.triple.club.review.model.contant.ActionType;
-import com.triple.club.review.model.contant.EventType;
-import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.repository.ReviewRepo;
-import com.triple.club.review.service.impl.ReviewServiceImpl;
+import com.triple.club.review.place.repository.PlaceRepo;
+import com.triple.club.review.review.model.contant.ActionType;
+import com.triple.club.review.review.model.contant.EventType;
+import com.triple.club.review.review.model.dto.ReviewDto;
+import com.triple.club.review.review.repository.ReviewRepo;
+import com.triple.club.review.review.service.impl.ReviewServiceImpl;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,13 @@ class ReviewServiceTest {
     private EntityManager em;
 
     private final ReviewRepo reviewRepo;
+    private final PlaceRepo placeRepo;
 
     @Autowired
-    public ReviewServiceTest(EntityManager em, ReviewRepo reviewRepo, PointService pointService) {
+    public ReviewServiceTest(EntityManager em, ReviewRepo reviewRepo, PlaceRepo placeRepo, PointService pointService) {
         this.em = em;
         this.reviewRepo = reviewRepo;
+        this.placeRepo = placeRepo;
         this.pointService = pointService;
     }
 
@@ -39,7 +42,7 @@ class ReviewServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.service = new ReviewServiceImpl(this.reviewRepo, pointService, em);
+        this.service = new ReviewServiceImpl(this.reviewRepo, placeRepo, pointService, em);
 
     }
 

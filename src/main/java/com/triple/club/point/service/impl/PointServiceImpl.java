@@ -6,7 +6,7 @@ import com.triple.club.point.model.dto.PointInquireDto;
 import com.triple.club.point.model.entity.PointLogEntity;
 import com.triple.club.point.repository.PointLogRepo;
 import com.triple.club.point.service.PointService;
-import com.triple.club.review.model.dto.ReviewDto;
+import com.triple.club.review.review.model.dto.ReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;

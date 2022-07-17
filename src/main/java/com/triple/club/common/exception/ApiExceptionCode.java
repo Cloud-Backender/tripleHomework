@@ -10,6 +10,7 @@ public enum ApiExceptionCode {
     NOT_EXIST_USER(102, "유저가 존재하지 않습니다."),
     NOT_EXIST_EVENT_TYPE(600, "존재하지 않는 type 입니다."),
     NOT_EXIST_EVENT_ACTION_TYPE(601, "존재하지 않는 action 입니다."),
+    NOT_EXIST_PLACE(701, "존재하지 않는 장소입니다."),
     SYSTEM_ERROR(599, "시스템 에러")
     ;
 

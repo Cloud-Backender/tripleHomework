@@ -1,7 +1,7 @@
-package com.triple.club.review.model.dto;
+package com.triple.club.review.review.model.dto;
 
-import com.triple.club.review.model.contant.ActionType;
-import com.triple.club.review.model.contant.EventType;
+import com.triple.club.review.review.model.contant.ActionType;
+import com.triple.club.review.review.model.contant.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

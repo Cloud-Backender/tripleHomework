@@ -3,9 +3,7 @@ package com.triple.club.point.service;
 import com.triple.club.common.exception.CustomException;
 import com.triple.club.point.repository.PointLogRepo;
 import com.triple.club.point.service.impl.PointServiceImpl;
-import com.triple.club.review.model.dto.ReviewDto;
-import com.triple.club.review.model.entity.ReviewEntity;
-import com.triple.club.review.service.impl.ReviewServiceImpl;
+import com.triple.club.review.review.model.dto.ReviewDto;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

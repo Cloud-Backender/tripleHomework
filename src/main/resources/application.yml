@@ -5,7 +5,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming:
         physical-strategy: com.triple.club.common.configuration.JPANamingConfig
     show-sql: true
@@ -16,7 +16,7 @@ spring:
     open-in-view: true
   datasource:
     driverclassname: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/data?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/test_data?serverTimezone=Asia/Seoul
     username: root
     password: admin
 logging:
